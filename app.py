@@ -4,7 +4,7 @@ from flask_cors import CORS
 from werkzeug.security import check_password_hash  # Para verificar contraseñas
 
 app = Flask(__name__)
-CORS(app,  resources={r"/*": {"origins": "https://ferreteria-el-venadito.web.app/"}})
+CORS(app)
 @app.route('/')
 # Función auxiliar para paginación de productos (versión principal)
 def get_productos():
