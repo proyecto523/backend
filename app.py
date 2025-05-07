@@ -4,7 +4,7 @@ from flask_cors import CORS
 from werkzeug.security import check_password_hash  # Para verificar contraseñas
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173"])
+CORS(app)
 @app.route('/')
 # Función auxiliar para paginación de productos (versión principal)
 def get_productos():
@@ -627,6 +627,33 @@ def eliminar_compra(id_compra):
         conn.commit()
         conn.close()
         return jsonify({'message': 'Compra eliminada exitosamente'}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Agregar venta
+@app.route("/api/venta", methods=["POST"])
+def agregar_venta():
+    try:
+        data = request.get_json()  # Obtener los datos enviados en el cuerpo de la solicitud
+        
+        conn = sqlite3.connect('BaseDatos-LLENADA.db')
+        cursor = conn.cursor()
+
+        cursor.execute('SELECT MAX(id_venta) FROM venta')
+        ultimo_id = cursor.fetchone()[0]
+        nuevo_id = ultimo_id + 1 if ultimo_id is not None else 1
+
+        cursor.execute('''
+            INSERT INTO venta (id_venta, id_cliente, id_empleado, fecha, total, metodo_pago)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (
+            nuevo_id, data['id_cliente'], data['id_empleado'], data['fecha'], data['total'], data['metodo_pago']
+        ))
+
+        conn.commit()
+        conn.close()
+        return jsonify({'message': 'Venta agregada exitosamente'}), 201
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
