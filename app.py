@@ -1,11 +1,12 @@
 from flask import Flask, jsonify, request
 import sqlite3
 from flask_cors import CORS
-from werkzeug.security import check_password_hash  # Para verificar contraseñas
+'''from werkzeug.security import check_password_hash  # Para verificar contraseñas'''
 
 app = Flask(__name__)
 CORS(app)
 @app.route('/')
+
 # Función auxiliar para paginación de productos (versión principal)
 def get_productos():
     page = int(request.args.get('page', 1))
@@ -103,36 +104,60 @@ def buscar_productos():
         for p in resultados
     ])
 
-# Ruta para login de cliente/empleado
+# Ruta para login de cliente/empleado corregido 
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
-    print("Datos recibidos:", data)
     usuario = data.get('usuario')
     password = data.get('password')
     is_empleado = data.get('isEmpleado')
-    
-    print(f"Usuario: {usuario}, Contraseña: {password}, ¿Empleado?: {is_empleado}")
 
+    # Eliminar espacios en blanco al inicio y al final del usuario y contraseña
+    usuario = usuario.strip()
+    password = password.strip()
+
+    # Verificar que se haya recibido el usuario y la contraseña
+    if not usuario or not password:
+        return jsonify({"error": "Usuario y contraseña son requeridos"}), 400
+
+    # Conectar a la base de datos
     conn = sqlite3.connect('BaseDatos-LLENADA.db')
-    conn.row_factory = sqlite3.Row  # ← ESTO HACE LA MAGIA
+    conn.row_factory = sqlite3.Row  # Para que los resultados sean accesibles como diccionarios
     cursor = conn.cursor()
 
+    # Imprimir para verificar qué usuario se está buscando
+    print(f"Consultando en la base de datos para el usuario: '{usuario}'")
+
+    # Consultar en la tabla de empleados o clientes dependiendo del tipo de usuario
     if is_empleado:
         cursor.execute("SELECT * FROM empleado WHERE usuario = ?", (usuario,))
     else:
         cursor.execute("SELECT * FROM cliente WHERE usuario = ?", (usuario,))
 
+    # Obtener el usuario de la base de datos
     user = cursor.fetchone()
 
+    # Ver el resultado de la consulta para depuración
+    print(f"Resultado de la búsqueda en la base de datos: {user}")
+
     if user:
-        stored_password = user["contraseña"]  # ← AHORA usamos el NOMBRE de la columna
-        if stored_password == password:
-            return jsonify({"message": "Login exitoso"}), 200
+        stored_password = user["contraseña"].strip()  # Eliminar posibles espacios en blanco de la contraseña almacenada
+        print(f"Contraseña almacenada: '{stored_password}'")
+        print(f"Contraseña ingresada: '{password}'")
+
+        # Comparación de las contraseñas
+        if stored_password == password:  # Si las contraseñas son iguales
+            if is_empleado:
+                # Si es empleado, devolver el id_empleado
+                return jsonify({"message": "Login exitoso", "id_empleado": user["id_empleado"]}), 200
+            else:
+                # Si es cliente, devolver el id_cliente
+                return jsonify({"message": "Login exitoso", "id_cliente": user["id_cliente"]}), 200
         else:
             return jsonify({"error": "Contraseña incorrecta"}), 400
     else:
         return jsonify({"error": "Usuario no encontrado"}), 400
+
 
 # Obtener cliente por ID
 @app.route('/api/cliente/<int:id_cliente>', methods=['GET'])
