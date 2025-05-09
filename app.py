@@ -658,6 +658,141 @@ def agregar_venta():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# Obtener todos los datos de Cliente
+@app.route('/api/cliente', methods=['GET'])
+def obtener_todos_los_clientes():
+    conn = sqlite3.connect('BaseDatos-LLENADA.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM cliente')
+    filas = cursor.fetchall()
+    conn.close()
+
+    if not filas:
+        return jsonify({'error': 'No data found in cliente table'}), 404
+
+    return jsonify([dict(fila) for fila in filas])
+
+# Obtener todos los datos de Categoría
+@app.route('/api/categoría', methods=['GET'])
+def obtener_todas_las_categorias():
+    conn = sqlite3.connect('BaseDatos-LLENADA.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM categoría')
+    filas = cursor.fetchall()
+    conn.close()
+
+    if not filas:
+        return jsonify({'error': 'No data found in categoría table'}), 404
+
+    return jsonify([dict(fila) for fila in filas])
+
+# Obtener todos los datos de Compra
+@app.route('/api/compra', methods=['GET'])
+def obtener_todas_las_compras():
+    conn = sqlite3.connect('BaseDatos-LLENADA.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM compra')
+    filas = cursor.fetchall()
+    conn.close()
+
+    if not filas:
+        return jsonify({'error': 'No data found in compra table'}), 404
+
+    return jsonify([dict(fila) for fila in filas])
+
+# Obtener todos los datos de DetalleCompra
+@app.route('/api/detallecompra', methods=['GET'])
+def obtener_todos_los_detallescompra():
+    conn = sqlite3.connect('BaseDatos-LLENADA.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM detallecompra')
+    filas = cursor.fetchall()
+    conn.close()
+
+    if not filas:
+        return jsonify({'error': 'No data found in detallecompra table'}), 404
+
+    return jsonify([dict(fila) for fila in filas])
+
+# Obtener todos los datos de Empleado
+@app.route('/api/empleado', methods=['GET'])
+def obtener_todos_los_empleados():
+    conn = sqlite3.connect('BaseDatos-LLENADA.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM empleado')
+    filas = cursor.fetchall()
+    conn.close()
+
+    if not filas:
+        return jsonify({'error': 'No data found in empleado table'}), 404
+
+    return jsonify([dict(fila) for fila in filas])
+
+# Obtener todos los datos de Inventario
+@app.route('/api/inventario', methods=['GET'])
+def obtener_todos_los_inventarios():
+    conn = sqlite3.connect('BaseDatos-LLENADA.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM inventario')
+    filas = cursor.fetchall()
+    conn.close()
+
+    if not filas:
+        return jsonify({'error': 'No data found in inventario table'}), 404
+
+    return jsonify([dict(fila) for fila in filas])
+
+# Obtener todos los datos de Productos
+@app.route('/api/producto', methods=['GET'])
+def obtener_todos_los_productos():
+    conn = sqlite3.connect('BaseDatos-LLENADA.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM productos')
+    filas = cursor.fetchall()
+    conn.close()
+
+    if not filas:
+        return jsonify({'error': 'No data found in productos table'}), 404
+
+    return jsonify([dict(fila) for fila in filas])
+
+# Obtener todos los datos de Proveedor
+@app.route('/api/proveedor', methods=['GET'])
+def obtener_todos_los_proveedores():
+    conn = sqlite3.connect('BaseDatos-LLENADA.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM proveedor')
+    filas = cursor.fetchall()
+    conn.close()
+
+    if not filas:
+        return jsonify({'error': 'No data found in proveedor table'}), 404
+
+    return jsonify([dict(fila) for fila in filas])
+
+# Obtener todos los datos de Venta
+@app.route('/api/venta', methods=['GET'])
+def obtener_todas_las_ventas():
+    conn = sqlite3.connect('BaseDatos-LLENADA.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM venta')
+    filas = cursor.fetchall()
+    conn.close()
+
+    if not filas:
+        return jsonify({'error': 'No data found in venta table'}), 404
+
+    return jsonify([dict(fila) for fila in filas])
+
 # Ejecuta la app si este archivo se corre directamente
 if __name__ == '__main__':
     app.run(debug=True)
